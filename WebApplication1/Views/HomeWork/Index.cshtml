@@ -1,41 +1,86 @@
 ﻿@{
-	ViewData["Title"] = "Index";
+    ViewData["Title"] = "HW";
 }
 
-<h1>Index</h1>
+<h1>旅遊景點</h1>
 
-<div id="card" class="">
-	<div class="card" style="width: 18rem;">
-		<img src="..." class="card-img-top" alt="...">
-		<div class="card-body">
-			<h5 class="card-title">Card title</h5>
-			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-		</div>
-	</div>
+<div class="btn-group">
+    <button type="button" class="btn btn-dark btn-lg dropdown-toggle mb-3" data-bs-toggle="dropdown"
+            aria-expanded="false" id="dropdownButton">
+        景點類別
+    </button>
+    <ul class="dropdown-menu" id="menu">
+        <li><a class="dropdown-item" href="#" data-category="所有景點">所有景點</a></li>
+        <!-- 動態生成下拉式選單 -->
+    </ul>
+</div>
+<div class="row" id="card">
+    <!-- 動態生成card -->
 </div>
 
-@section Scripts{
-	<script src="~/js/travel.js"></script>
-	<script>
-		const card = document.querySelector('#card');
-		const datas = spots.CommonFormat.Section;
+@section Scripts {
+    <script src="~/js/travel.js"></script>
+    <script>
+        const card = document.querySelector('#card');
+        const menu = document.querySelector('#menu');
+        const dropdownButton = document.querySelector('#dropdownButton')
+        const datas = spots.CommonFormat.Section;
 
-		const htmldatas = datas.map((data) => {
-			const { stitle, file,xbody } = data;
-			
-			return `<div class="card mb-2" style="width: 18rem;">
-								<img src="${file}" class="card-img-top" alt="...">
-						<div class="card-body">
-							<h5 class="card-title">${stitle}</h5>
-							<p class="card-text">${xbody}</p>
-						</div>
-					</div>`
-		})
+        // cat2 只取唯一一個
+        const uniqueCat2Values = {};
 
-		card.innerHTML = htmldatas.join("");
-				// console.log(spots.CommonFormat.Section);
-				// console.log(spots.CommonFormat.Section[0].stitle);
-				// console.log(spots.CommonFormat.Section[0].file.img[0].text);
-	</script>
+        datas.forEach(data => {
+            const { CAT2 } = data;
+            // 確保不重複添加
+            const lowerCaseCat2 = CAT2.toLowerCase();
+            if (!uniqueCat2Values[lowerCaseCat2]) {
+                uniqueCat2Values[lowerCaseCat2] = true;
+                menu.innerHTML += `<li><a class="dropdown-item" href="#" data-category="${CAT2}">${CAT2}</a></li>`;
+            }
+        });
+        function showCardsByCategory(category) {
+
+            let filteredData;
+
+            if (category === '' || category === '所有景點') {
+                // 如果類別為空，顯示所有卡片
+                filteredData = datas;
+                dropdownButton.textContent = '景點類別';
+            } else {
+                // 根據類別過濾
+                filteredData = datas.filter(data => data.CAT2 === category);
+                dropdownButton.textContent = category;
+            }
+
+            const htmldatas = filteredData.map(({ stitle, file, xbody, CAT2 }) => {
+                const firstImage = Object.values(file.img)[1];
+                const { description, text } = firstImage;
+
+                return `<div class="col-md-4 mb-3">
+                                    <div class="card h-100" id="${CAT2}">
+                                        <img src="${text}" class="rounded img-fluid" alt="${description}">
+                                        <div class="card-body">
+                                            <h3 class="card-title">${stitle}</h5>
+                                            <p class="card-text">${xbody}</p>
+                                        </div>
+                                    </div>
+                                </div>`;
+            });
+
+            card.innerHTML = htmldatas.join("");
+        }
+
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+                const category = this.getAttribute('data-category');
+                showCardsByCategory(category);
+            });
+        });
+
+        // 顯示卡片
+        showCardsByCategory('');
+        console.log(spots.CommonFormat.Section);
+    </script>
 }
 
