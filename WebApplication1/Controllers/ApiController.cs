@@ -38,7 +38,7 @@ namespace WebApplication1.Controllers
             return NotFound();
         }
 
-        public IActionResult Register(string name, int age = 26)
+        public IActionResult Register(string name, int age)
         {
             if (string.IsNullOrEmpty(name))
             {
