@@ -58,5 +58,15 @@ namespace WebApplication1.Controllers
             var road = _dbContext.Addresses.Where(a => a.SiteId == siteId).Select(a => a.Road).Distinct();
             return Json(road);
         }
+
+        public IActionResult CheckAccount(string name)
+        {
+            var member = _dbContext.Members.FirstOrDefault(a => a.Name == name);
+            if (member != null)
+            {
+                return Content("帳號已存在");
+            }
+            return Content("帳號可使用");
+        }
     }
 }
