@@ -63,12 +63,8 @@ namespace WebApplication1.Controllers
 
         public IActionResult CheckAccount(string name)
         {
-            var member = _dbContext.Members.FirstOrDefault(a => a.Name == name);
-            if (member != null)
-            {
-                return Content("帳號已存在");
-            }
-            return Content("帳號可使用");
+            var member = _dbContext.Members.Any(a => a.Name == name);
+            return Content(member.ToString());
         }
     }
 }
