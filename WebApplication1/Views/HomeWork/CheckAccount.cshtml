@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewData["Title"] = "CheckAccount";
+}
+
+<h1>CheckAccount</h1>
+<form>
+	<div class="mb-3">
+		<label for="inputName" class="form-label">姓名:</label>
+		<input type="text" class="form-control" id="inputName" name="Name">
+	</div>
+	<div id="alert1" class="alert alert-warning" role="alert"></div>
+	<div class="mb-3">
+		<label for="inputEmail" class="form-label">電子郵件:</label>
+		<input type="email" class="form-control" id="inputEmail" name="Email">
+	</div>
+	<div class="mb-3">
+		<label for="inputAge" class="form-label">年齡:</label>
+		<input type="number" class="form-control" id="inputAge" name="Age">
+	</div>
+	<button type="submit" class="btn btn-primary" id="btn1">送出</button>
+	<div id="alert2" class="alert alert-primary" role="alert"></div>
+</form>
+
+@section Scripts {
+	<script>
+		const userName = document.querySelector('#inputName');
+		const btn = document.querySelector('#btn1');
+		const alert1 = document.querySelector('#alert1');
+		const alert2 = document.querySelector('#alert2');
+
+		userName.addEventListener('change', async () => {
+			const url = `@Url.Content("~/api/checkAccount")?name=${userName.value}`;
+			const response = await fetch(url);
+			const result = await response.text();
+			if (result) {
+				alert1.innerHTML = "帳號已存在"
+			}
+			else {
+				alert1.innerHTML = "帳號可使用"
+			}
+			alert1.innerHTML = result;
+		})
+	</script>
+}
+
