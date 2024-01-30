@@ -4,7 +4,7 @@
 }
 
 <h1>CheckAccount</h1>
-<form>
+<form id="userForm">
 	<div class="mb-3">
 		<label for="inputName" class="form-label">姓名:</label>
 		<input type="text" class="form-control" id="inputName" name="Name">
@@ -28,6 +28,7 @@
 		const btn = document.querySelector('#btn1');
 		const alert1 = document.querySelector('#alert1');
 		const alert2 = document.querySelector('#alert2');
+		const form = document.querySelector('#userFrom');
 
 		userName.addEventListener('change', async () => {
 			const url = `@Url.Content("~/api/checkAccount")?name=${userName.value}`;
@@ -41,6 +42,22 @@
 			}
 			alert1.innerHTML = result;
 		})
+
+		btn.addEventListener('click', async (event) => {
+			event.preventDefault(); //防止預設行為的發生
+
+			//透過 FormData 物件讀取資料
+			const formData = new FormData(form);
+
+			const url = '@Url.Content("~/api/register")';
+			const response = await fetch(url, {
+				body: formData,
+				method: 'POST'
+			})
+			let data = await response.text();
+
+			aler2.innerHTML = data;
+		});
 	</script>
 }
 
